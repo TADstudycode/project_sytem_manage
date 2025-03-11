@@ -1,4 +1,4 @@
-/* .main_content{
+.main_content{
     padding: unset !important;
     overflow: hidden;
 }
@@ -7,4 +7,4 @@
     width: 100%;
     overflow-x: hidden;
     display: flex;
-} */
+} 

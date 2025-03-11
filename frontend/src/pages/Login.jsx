@@ -21,15 +21,21 @@ const Login = () => {
     }
   };
     return(
-      <div className="container">
-        <div className="row justify-content-center">
-            <form onSubmit={handleSubmit}>
-                <input type="email" className="username" placeholder="email" name="email" onChange={handleChange} required/>
-                <input type="password" className="password" placeholder="Password" name="password" onChange={handleChange} required/>
-                <button type="submit">Login</button>
-            </form>
+      <div className="login-container">
+      <h2>Login</h2>
+      <form onSubmit={handleSubmit}>
+        <div className="input-box">
+          <label htmlFor="email">Email</label>
+          <input type="email" id="email" name="email" placeholder="Email" onChange={handleChange} required />
         </div>
-      </div>  
+        <div className="input-box">
+          <label htmlFor="password">Password</label>
+          <input type="password" id="password" name="password" placeholder="Password" onChange={handleChange} required />
+        </div>
+        <button type="submit">Login</button>
+        <a href="#" className="register-link">Register</a>
+      </form>
+    </div>  
     );
 };
 export default Login;
