@@ -1,0 +1,68 @@
+/* .sidebar {
+    width: 200px;
+    background-color: #3b82f6;
+    color: white;
+    min-height: 100vh;
+    padding: 20px;
+}
+
+.profile {
+    text-align: center;
+    margin-bottom: 20px;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    gap: 10px;
+}
+
+.profile_img_wrap{
+    width: 145px;
+    height: 145px;
+}
+
+.profile_img_wrap img{
+    width: 100%;
+    height: 100%;
+    border-radius: 50%;
+    overflow: hidden;
+}
+
+.avatar_area{
+    flex-direction: column;
+    align-items: center;
+    gap: 10px;
+}
+
+.menu {
+    list-style: none;
+    padding: 0;
+    display: flex;
+    flex-direction: column;
+    gap: 22px;
+}
+
+.tab_group{
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+}
+
+.menu li i{
+    font-size: 2rem;
+}
+
+.menu li .fa-solid.fa-chevron-right{
+    font-size: 1rem;
+    margin-top: 10px;
+}
+
+.menu li {
+    margin: 15px 0;
+    cursor: pointer;
+}
+
+.menu li a{
+    color: unset !important;
+    text-decoration: unset !important;
+    font-size: 2rem;
+} */
