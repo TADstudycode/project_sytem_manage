@@ -23,6 +23,27 @@
 // }
 
 // export default App;
+// import {useEffect, useState} from "react";
+// import axios from "axios";
+
+// function App(){
+//   const [data, setData] = useState(null);
+
+//   useEffect(() =>{
+//     axios.get("http://127.0.0.1:8000/index.php")
+//     .then(response => setData(response.data))
+//     .catch(error => console.error("lỗi khi gọi API", error));
+//   }, []);
+
+//   return (
+//     <div>
+//       <h1>Quản lí thiết bị và linh kiện máy tính</h1>
+//       <p>{data ? data.message: "đang tải dữ liệu..."}</p>
+//     </div>
+//   );
+// }
+
+// export default App;
 import AppRoutes from "./routes";
 
 function App() {

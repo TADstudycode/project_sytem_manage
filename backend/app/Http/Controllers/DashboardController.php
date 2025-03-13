@@ -32,14 +32,15 @@ class DashboardController extends Controller
               DB::raw('SUM(total_price) as total')
           )->where('created_at', '>=', Carbon::now()->subDays(7))
           ->groupBy('date')->orderBy('date', 'ASC')->get();
-  
+          $totalCustomers = SaleLog::distinct('customer_email')->count('customer_email');
           return response()->json([
               'total_orders' => $totalOrders,
               'total_revenue' => $totalRevenue,
               'monthly_sales' => $monthlySales,
               'product_sales' => $productSales,
               'order_status' => $orderStatus,
-              'daily_revenue' => $dailyRevenue
+              'daily_revenue' => $dailyRevenue,
+              'total_customers' => $totalCustomers
           ]);
     }
 
