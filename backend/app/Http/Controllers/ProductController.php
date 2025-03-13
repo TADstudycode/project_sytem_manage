@@ -104,7 +104,7 @@ class ProductController extends Controller
             'action' => 'required|in:edit',
             'id' => 'required|exists:products,id',
             'name' => 'string|max:255',
-            'category' => 'category|max:255',
+            'category' => 'required|string|max:255',
             'product_code' => 'string|max:15',
             'status' => 'string|max:255',
             'import_price' => 'string|max:50',
@@ -112,7 +112,7 @@ class ProductController extends Controller
             'image' => 'nullable',
             'description' => 'nullable|string',
             'brand' => 'nullable|string',
-            'quantity' => 'nullable|string'
+            'quantity' => 'nullable|integer'
         ]);
 
         if ($validator->fails()) {
