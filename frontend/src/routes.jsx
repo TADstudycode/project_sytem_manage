@@ -5,7 +5,8 @@ import Dashboard from "./pages/Dashboard";
 import Product from "./pages/Product";
 import Member from "./pages/Member";
 import Register from "./pages/Register";
-
+import Order from "./pages/Order";
+import Discount from "./pages/Discount";
 const AppRoutes = () => {
   return (
     <Router>
@@ -18,6 +19,8 @@ const AppRoutes = () => {
           <Route path="/dashboard" element={<Dashboard />} />
           <Route path="/product" element={<Product />} />
           <Route path="/member" element={<Member />} />
+          <Route path="/order" element={<Order />}></Route>
+          <Route path="/discount" element={<Discount />}></Route>
         </Route>
         {/* <Route path="*" element={<Navigate to="/" />} /> */}
       </Routes>

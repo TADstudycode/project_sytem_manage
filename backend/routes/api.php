@@ -4,7 +4,8 @@ use App\Http\Controllers\AccountController;
 use App\Http\Controllers\MemberController;
 use App\Http\Controllers\ProductController;
 use App\Http\Controllers\DashboardController;
-use Illuminate\Http\Request;
+use App\Http\Controllers\OrderController;
+use App\Http\Controllers\DiscountController;
 use Illuminate\Support\Facades\Route;
 
 // Route::get('/user', function (Request $request) {
@@ -22,5 +23,13 @@ Route::middleware(['api'])->group(function(){
     Route::get('/dashboard', [DashboardController::class, 'index']);
     Route::post('/account/register', [AccountController::class, 'store']);
     Route::post('/account/login', [AccountController::class, 'login']);
+    Route::post('/order/get', [OrderController::class, 'get']);
+    Route::post('/order/create', [OrderController::class, 'create']);
+    Route::post('/order/update', [OrderController::class, 'update']);
+    Route::post('/order/delete', [OrderController::class, 'delete']);
+    Route::post('/discount/get', [DiscountController::class, 'index']);
+    Route::post('/discount/create', [DiscountController::class, 'create']);
+    Route::post('/discount/update', [DiscountController::class, 'update']);
+    Route::post('/discount/delete', [DiscountController::class, 'delete']);
     Route::middleware('auth:sanctum')->post('/logout', [AccountController::class, 'logout']);
 });

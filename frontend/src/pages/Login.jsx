@@ -41,7 +41,7 @@ const Login = () => {
                 <input type="password" id="password" name="password" placeholder="Password" onChange={handleChange} required />
               </div>
               <button type="submit">Login</button>
-              <button className="register-link">Register</button>
+              <button className="register-link" onClick={() => navigate("/register")}>Register</button>
             </form>    
           </div>  
         </div>

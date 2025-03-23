@@ -1,17 +1,3 @@
-// import Header  from '../components/Header';
-// import Sidebar from '../components/Sidebar';
-// import '../styles/Dashboard.css';
-// const Dashboard = () => {
-//     return(
-//         <div className="app col-12">
-//                 <Sidebar />
-//             <div className="main_content col-10">
-//                 <Header />
-//             </div>
-//         </div>
-//     )
-// };
-// export default Dashboard;
 import Header from '../components/Header';
 import Sidebar from '../components/Sidebar';
 import '../styles/Dashboard.css';
@@ -54,7 +40,7 @@ const Dashboard = () => {
                         </div>
                         <div className="stat-item">
                             <p>Total Outcome</p>
-                            <h3>{data.total_outcome} 23000000.00 VND</h3>
+                            <h3>{data.total_outcome} _ _ _ VND</h3>
                             <p>up to {new Date().toLocaleDateString()}</p>
                         </div>
                     </div>
@@ -84,7 +70,7 @@ const Dashboard = () => {
                         <div className="chart-item">
                             <h3>Total sell </h3>
                             <Pie data={{
-                                labels: data.product_sales.map(item => item.product_type),
+                                labels: data.product_sales.map(item => item.category),
                                 datasets: [{
                                     data: data.product_sales.map(item => item.count),
                                     backgroundColor: ["#FF6384", "#36A2EB", "#FFCE56", "#4BC0C0", "#9966FF", "#FF9F40"]

@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 use App\Models\Account;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Validator;
+use Laravel\Sanctum\PersonalAccessToken;
 use Illuminate\Validation\ValidationException;
 class AccountController extends Controller
 {
@@ -32,7 +33,7 @@ class AccountController extends Controller
             'name' => 'required|string',
             'email' => "required|string|max:255",
             'password' => "required|string|min:8",
-            'role' => "required|string",
+            'role' => "nullable|string",
         ]);
 
         if ($validator->fails()) {
@@ -43,6 +44,7 @@ class AccountController extends Controller
         }
 
         $data = $validator->validated();
+        $data['role'] = $data['role'] ?? 'user';
         $data['password'] = base64_encode($data['password']);
         Account::create($data);
         return response()->json([
@@ -62,13 +64,22 @@ class AccountController extends Controller
                 'email' => ['Thông tin đăng nhập không chính xác.'],
             ]);
         }
-
+        $user_data = ["id"=>$user->id, "name"=>$user->name, "email"=>$user->email, "role"=>$user->role];
+        $active_token = PersonalAccessToken::where('tokenable_id', $user->id)->where('tokenable_type', Account::class)->count();
+        $max_token = 3;
+        if($active_token > $max_token){
+            PersonalAccessToken::where('tokenable_id', $user->id)
+                               ->where('tokenable_type', Account::class)
+                               ->orderBy('created_at', 'asc')
+                               ->first()
+                               ->delete();
+        }
         $token = $user->createToken('auth_token')->plainTextToken;
-
         return response()->json([
+            'status' => 1,
             'message' => 'Đăng nhập thành công!',
             'token' => $token,
-            'user' => $user
+            'user' => $user_data
         ]);
     }
 

@@ -28,6 +28,20 @@ const Sidebar = () => {
                         <i class="fa-solid fa-chevron-right"></i>
                     </div>
                 </li>
+                <li className="tab_link order">
+                    <div className="tab_group">
+                        <i class="fa-solid fa-box"></i>
+                        <Link to="/order">Order</Link>
+                        <i class="fa-solid fa-chevron-right"></i>
+                    </div>
+                </li>
+                <li className="tab_link discount">
+                    <div className="tab_group">
+                        <i class="fa-solid fa-box"></i>
+                        <Link to="/discount">Discount</Link>
+                        <i class="fa-solid fa-chevron-right"></i>
+                    </div>
+                </li>
                 <li className="tab_link member">
                     <div className="tab_group">
                         <i class="fa-solid fa-user"></i>

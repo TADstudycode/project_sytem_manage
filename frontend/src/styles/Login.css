@@ -61,6 +61,7 @@
 }
 
 .input-box input[type="email"],
+.input-box input[type="text"],
 .input-box input[type="password"] {
     width: 100%;
     padding: 12px;
@@ -71,6 +72,7 @@
 }
 
 .input-box input[type="email"]:focus,
+.input-box input[type="text"]:focus,
 .input-box input[type="password"]:focus {
     border-color: #ba89ef;
     outline: none;
