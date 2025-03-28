@@ -2,12 +2,17 @@
 
 namespace App\Http\Controllers;
 use App\Models\Account;
+use App\Services\TokenService;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Validator;
 use Laravel\Sanctum\PersonalAccessToken;
 use Illuminate\Validation\ValidationException;
 class AccountController extends Controller
 {
+    protected $tokenService;
+    public function __construct(TokenService $tokenService){
+        $this->tokenService = $tokenService;
+    }
     /**
      * Display a listing of the resource.
      */
@@ -74,13 +79,14 @@ class AccountController extends Controller
                                ->first()
                                ->delete();
         }
-        $token = $user->createToken('auth_token')->plainTextToken;
+        // $token = $user->createToken('auth_token')->plainTextToken;
+        $token = $this->tokenService->createToken($user, 'auth_token')->plainTextToken;
         return response()->json([
             'status' => 1,
             'message' => 'Đăng nhập thành công!',
             'token' => $token,
             'user' => $user_data
-        ]);
+        ], 200);
     }
 
     protected function checkPassword($password, $hashedPassword){

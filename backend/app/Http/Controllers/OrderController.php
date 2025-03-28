@@ -30,7 +30,7 @@ class OrderController extends Controller
     public function create(Request $request)
     {
         $data = $request->json()->all();
-        $products = $data['products'] ?? []; // Danh sách sản phẩm (mảng)
+        $products = $data['products'] ?? [];
         if (empty($products)) {
             return response()->json([
                 'status' => 1,
@@ -38,13 +38,12 @@ class OrderController extends Controller
             ], 400);
         }
 
-        $orders = []; // Lưu danh sách đơn hàng đã tạo
-        DB::beginTransaction(); // Bắt đầu transaction để đảm bảo tính toàn vẹn dữ liệu
+        $orders = [];
+        DB::beginTransaction();
 
         try {
             $orderNumber = 'ORD-' . strtoupper(uniqid());
             foreach ($products as $productData) {
-                // Xác thực dữ liệu từng sản phẩm
                 $validatedData = [
                     'product_id' => $productData['product_id'] ?? null,
                     'quantity' => $productData['quantity'] ?? 1,
@@ -54,8 +53,6 @@ class OrderController extends Controller
                     'customer_address' => $data['customer_address'] ?? null,
                     'discount' => $data['discount'] ?? null,
                 ];
-
-                // Kiểm tra sản phẩm có tồn tại hay không
                 $product = Product::findOrFail($validatedData['product_id']);
                 if($validatedData['discount'] !== null){
                     $discount = Discount::where("name",$validatedData['discount'])->first();
@@ -71,17 +68,12 @@ class OrderController extends Controller
                         }
                     }
                 }
-                // Kiểm tra tồn kho
                 if ($product->quantity < $validatedData['quantity']) {
                     throw new \Exception("Sản phẩm {$product->name} không đủ số lượng trong kho.");
                 }
-
-                // Tính toán giá trị đơn hàng
                 $totalPrice = $product->sale_price * $validatedData['quantity'];
-                $VAT = $totalPrice * 0.1; // Giả sử VAT là 10%
+                $VAT = $totalPrice * 0.1;
                 $finalPrice = $totalPrice + $VAT;
-
-                // Tạo đơn hàng
                 $order = Order::create([
                     'id' => (string) \Illuminate\Support\Str::uuid(),
                     'order_number' => $orderNumber,
@@ -101,12 +93,9 @@ class OrderController extends Controller
                     'description' => $productData['description'] ?? null,
                 ]);
                 $product->decrement('quantity', $validatedData['quantity']);
-
-                // Lưu đơn hàng vào danh sách
                 $orders[] = $order;
             }
-
-            DB::commit(); // Commit transaction nếu không có lỗi
+            DB::commit();
             return response()->json([
                 'status' => 0,
                 'message' => 'Bạn đã đặt hàng thành công',
@@ -114,7 +103,7 @@ class OrderController extends Controller
                 'orders' => $orders
             ], 201);
         } catch (\Exception $e) {
-            DB::rollBack(); // Rollback transaction nếu có lỗi
+            DB::rollBack();
             return response()->json([
                 'status' => 1,
                 'message' => $e->getMessage()
@@ -152,11 +141,9 @@ class OrderController extends Controller
     public function update(Request $request)
     {
         $data = $request->json()->all();
-    
-        // Xác thực dữ liệu đầu vào
         $validatedData = $request->validate([
             'order_number' => 'required|exists:orders,order_number',
-            'product_id' => 'nullable|exists:products,id', // Nếu muốn cập nhật một sản phẩm cụ thể
+            'product_id' => 'nullable|exists:products,id',
             'quantity' => 'nullable|integer|min:1',
             'order_status' => 'nullable|string|max:255',
             'customer_name' => 'nullable|string|max:255',
@@ -164,11 +151,8 @@ class OrderController extends Controller
             'customer_email' => 'nullable|email|max:255',
             'customer_address' => 'nullable|string|max:255',
         ]);
-    
-        DB::beginTransaction(); // Bắt đầu transaction để đảm bảo tính toàn vẹn dữ liệu
-    
+        DB::beginTransaction();
         try {
-            // Lấy danh sách các đơn hàng theo `order_number`
             $orders = Order::where('order_number', $validatedData['order_number'])->get();
     
             if ($orders->isEmpty()) {
@@ -177,8 +161,6 @@ class OrderController extends Controller
                     'message' => 'Không tìm thấy đơn hàng với mã order_number này.'
                 ], 404);
             }
-    
-            // Nếu có `product_id`, chỉ cập nhật sản phẩm cụ thể
             if (isset($validatedData['product_id'])) {
                 $order = $orders->where('product_id', $validatedData['product_id'])->first();
     
@@ -191,20 +173,18 @@ class OrderController extends Controller
     
                 $this->updateOrder($order, $validatedData, $data);
             } else {
-                // Cập nhật tất cả các sản phẩm trong đơn hàng
                 foreach ($orders as $order) {
                     $this->updateOrder($order, $validatedData, $data);
                 }
             }
-    
-            DB::commit(); // Commit transaction nếu không có lỗi
+            DB::commit();
             return response()->json([
                 'status' => 0,
                 'message' => 'Cập nhật đơn hàng thành công.',
                 'orders' => $orders
             ], 200);
         } catch (\Exception $e) {
-            DB::rollBack(); // Rollback transaction nếu có lỗi
+            DB::rollBack();
             return response()->json([
                 'status' => 1,
                 'message' => $e->getMessage()
@@ -212,44 +192,30 @@ class OrderController extends Controller
         }
     }
     
-    /**
-     * Hàm hỗ trợ cập nhật một đơn hàng cụ thể.
-     */
+
     private function updateOrder($order, $validatedData, $data)
     {
         $product = Product::findOrFail($order->product_id);
-    
-        // Nếu có cập nhật số lượng sản phẩm
         if (isset($validatedData['quantity'])) {
             $newQuantity = $validatedData['quantity'];
             $currentOrderQuantity = $order->quantity;
-    
-            // Kiểm tra tồn kho
-            $availableStock = $product->quantity + $currentOrderQuantity; // Hoàn trả số lượng cũ trước khi kiểm tra
+            $availableStock = $product->quantity + $currentOrderQuantity;
             if ($availableStock < $newQuantity) {
                 throw new \Exception("Số lượng sản phẩm {$product->name} trong kho không đủ.");
             }
-    
-            // Cập nhật tồn kho sản phẩm
             $product->update([
                 'quantity' => $availableStock - $newQuantity
             ]);
-    
-            // Cập nhật số lượng và tổng giá trị đơn hàng
             $order->update([
                 'quantity' => $newQuantity,
                 'total_price' => $order->sale_price * $newQuantity + $order->VAT
             ]);
         }
-    
-        // Nếu có cập nhật trạng thái đơn hàng
         if (isset($validatedData['order_status'])) {
             $order->update([
                 'order_status' => $validatedData['order_status']
             ]);
         }
-    
-        // Nếu có cập nhật thông tin khách hàng
         if (isset($data['customer_name'])) {
             $order->update([
                 'customer_name' => $data['customer_name']
@@ -279,7 +245,6 @@ class OrderController extends Controller
     {
         try {
             $data = $request->json()->all();
-            // Lấy danh sách các đơn hàng theo `order_number`
             $orders = Order::where('order_number', $data['order_number'])->get();
     
             if ($orders->isEmpty()) {
@@ -288,12 +253,10 @@ class OrderController extends Controller
                     'message' => 'Không tìm thấy đơn hàng với mã order_number này.'
                 ], 404);
             }
-    
-            // Hoàn trả số lượng sản phẩm trong kho và xóa đơn hàng
             foreach ($orders as $order) {
                 $product = Product::find($order->product_id);
                 if ($product && $order->order_status !== 'Completed') {
-                    $product->increment('quantity', $order->quantity); // Hoàn trả số lượng
+                    $product->increment('quantity', $order->quantity);
                 }
                 $order->delete();
             }

@@ -1,46 +1,36 @@
 import React, { useState, useEffect } from "react";
-import axios from "axios";
-
-// API URL
+import api from "../api";
 const API_BASE_URL = "http://127.0.0.1:8000/api/discount";
-
-// Hàm lấy danh sách mã giảm giá
 const fetchDiscountsAPI = async () => {
     try {
-        const response = await axios.post(`${API_BASE_URL}/get`);
+        const response = await api.post(`${API_BASE_URL}/get`);
         return response.data;
     } catch (error) {
         console.error("Lỗi khi lấy danh sách mã giảm giá:", error);
         throw error;
     }
 };
-
-// Hàm thêm mã giảm giá
 const createDiscountAPI = async (discount) => {
     try {
-        const response = await axios.post(`${API_BASE_URL}/create`, discount);
+        const response = await api.post(`${API_BASE_URL}/create`, discount);
         return response.data;
     } catch (error) {
         console.error("Lỗi khi thêm mã giảm giá:", error);
         throw error;
     }
 };
-
-// Hàm sửa mã giảm giá
 const updateDiscountAPI = async (discount) => {
     try {
-        const response = await axios.post(`${API_BASE_URL}/update`, discount);
+        const response = await api.post(`${API_BASE_URL}/update`, discount);
         return response.data;
     } catch (error) {
         console.error("Lỗi khi sửa mã giảm giá:", error);
         throw error;
     }
 };
-
-// Hàm xóa mã giảm giá
 const deleteDiscountAPI = async (id) => {
     try {
-        const response = await axios.post(`${API_BASE_URL}/delete`, { id });
+        const response = await api.post(`${API_BASE_URL}/delete`, { id });
         return response.data;
     } catch (error) {
         console.error("Lỗi khi xóa mã giảm giá:", error);
@@ -48,15 +38,13 @@ const deleteDiscountAPI = async (id) => {
     }
 };
 const DiscountList = () => {
-    const [discounts, setDiscounts] = useState([]); // Danh sách mã giảm giá
-    const [selectedDiscount, setSelectedDiscount] = useState(null); // Mã giảm giá được chọn để sửa
-    const [showAddEditModal, setShowAddEditModal] = useState(false); // Hiển thị modal thêm/sửa
-    const [showDeleteConfirmModal, setShowDeleteConfirmModal] = useState(false); // Hiển thị modal xác nhận xóa
-    const [discountToDelete, setDiscountToDelete] = useState(null); // Mã giảm giá cần xóa
-    const [alertMessage, setAlertMessage] = useState(""); // Nội dung thông báo
-    const [showAlertModal, setShowAlertModal] = useState(false); // Hiển thị modal thông báo
-
-    // Lấy danh sách mã giảm giá
+    const [discounts, setDiscounts] = useState([]);
+    const [selectedDiscount, setSelectedDiscount] = useState(null);
+    const [showAddEditModal, setShowAddEditModal] = useState(false);
+    const [showDeleteConfirmModal, setShowDeleteConfirmModal] = useState(false);
+    const [discountToDelete, setDiscountToDelete] = useState(null);
+    const [alertMessage, setAlertMessage] = useState("");
+    const [showAlertModal, setShowAlertModal] = useState(false);
     useEffect(() => {
         fetchDiscounts();
     }, []);
@@ -74,14 +62,12 @@ const DiscountList = () => {
     const handleSaveDiscount = async () => {
         try {
             if (selectedDiscount?.id) {
-                // Sửa mã giảm giá
                 await updateDiscountAPI(selectedDiscount);
             } else {
-                // Thêm mã giảm giá
                 await createDiscountAPI(selectedDiscount);
             }
-            fetchDiscounts(); // Cập nhật danh sách
-            setShowAddEditModal(false); // Đóng modal
+            fetchDiscounts();
+            setShowAddEditModal(false);
         } catch (error) {
             setAlertMessage("Lỗi khi lưu mã giảm giá!");
             setShowAlertModal(true);
@@ -91,8 +77,8 @@ const DiscountList = () => {
     const handleDeleteDiscount = async () => {
         try {
             await deleteDiscountAPI(discountToDelete.id);
-            fetchDiscounts(); // Cập nhật danh sách
-            setShowDeleteConfirmModal(false); // Đóng modal xác nhận xóa
+            fetchDiscounts();
+            setShowDeleteConfirmModal(false);
         } catch (error) {
             setAlertMessage("Lỗi khi xóa mã giảm giá!");
             setShowAlertModal(true);
@@ -105,8 +91,8 @@ const DiscountList = () => {
             <button
                 className="btn btn-primary mb-3"
                 onClick={() => {
-                    setSelectedDiscount(null); // Đặt lại mã giảm giá được chọn
-                    setShowAddEditModal(true); // Hiển thị modal thêm/sửa
+                    setSelectedDiscount(null);
+                    setShowAddEditModal(true);
                 }}
             >
                 Thêm mã giảm giá
@@ -136,8 +122,8 @@ const DiscountList = () => {
                                 <button
                                     className="btn btn-warning btn-sm"
                                     onClick={() => {
-                                        setSelectedDiscount(discount); // Chọn mã giảm giá để sửa
-                                        setShowAddEditModal(true); // Hiển thị modal thêm/sửa
+                                        setSelectedDiscount(discount);
+                                        setShowAddEditModal(true);
                                     }}
                                 >
                                     Sửa
@@ -145,8 +131,8 @@ const DiscountList = () => {
                                 <button
                                     className="btn btn-danger btn-sm ms-2"
                                     onClick={() => {
-                                        setDiscountToDelete(discount); // Chọn mã giảm giá để xóa
-                                        setShowDeleteConfirmModal(true); // Hiển thị modal xác nhận xóa
+                                        setDiscountToDelete(discount);
+                                        setShowDeleteConfirmModal(true);
                                     }}
                                 >
                                     Xóa

@@ -1,5 +1,5 @@
 import { useState, useEffect } from "react";
-import axios from "axios";
+import api from "../api";
 import '../styles/MemberList.css';
 import '../styles/Overlay.css';
 const MemberList = () => {
@@ -22,7 +22,7 @@ const MemberList = () => {
   }, []);
 
   const fetchMembers = (url) => {
-    axios.post(url, { action: "get" }).then((response) => {
+    api.post(url, { action: "get" }).then((response) => {
       setMembers(response.data.data.data);
       setPagination({
         prev_page: response.data.data.prev_page_url,
@@ -56,7 +56,7 @@ const MemberList = () => {
   };
 
   const handleSaveEdit = () => {
-    axios
+    api
       .post("http://127.0.0.1:8000/api/member/edit", { id: editMember.id, ...formData, action: "edit" })
       .then((response) => {
         alert("Cập nhật thành công!");
@@ -68,7 +68,7 @@ const MemberList = () => {
 
   const handleDelete = (id) => {
     if (window.confirm("Bạn có chắc chắn muốn xóa thành viên này?")) {
-      axios
+      api
         .post("http://127.0.0.1:8000/api/member/delete", { id, action: "delete" })
         .then((response) => {
           alert("Xóa thành công!");
@@ -91,7 +91,7 @@ const MemberList = () => {
   };
 
   const handleSaveCreate = () => {
-    axios
+    api
       .post("http://127.0.0.1:8000/api/member/add", { ...formData, action: "add" })
       .then((response) => {
         alert("Thêm thành viên thành công!");

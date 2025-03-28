@@ -8,18 +8,18 @@ const Login = () => {
   const handleChange = (e) =>{
     setFormData({...formData, [e.target.name]: e.target.value});
   };
-  const handleSubmit = async(e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
     try {
-      await getCsrfToken();
-      const response = await api.post("/account/login", formData);
-      localStorage.setItem("token", response.data.token);
-      alert(response.data.message);
-      navigate('/dashboard');
+        await getCsrfToken();
+        const response = await api.post("/account/login", formData);
+        localStorage.setItem("token", response.data.token);
+        alert(response.data.message);
+        navigate("/dashboard");
     } catch (error) {
-      alert("lỗi khi đăng nhập");
+        alert("Lỗi khi đăng nhập");
     }
-  };
+};
     return(
       <div className="login-wrap col-8">
           <div className="icon-container">

@@ -11,8 +11,6 @@ class DiscountController extends Controller
         $discounts = Discount::all();
         return response()->json($discounts);
     }
-
-    // Thêm mã giảm giá
     public function create(Request $request)
     {
        try {

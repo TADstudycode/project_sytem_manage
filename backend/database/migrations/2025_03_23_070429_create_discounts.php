@@ -14,9 +14,9 @@ return new class extends Migration
         Schema::create('discounts', function (Blueprint $table) {
             $table->uuid("id");
             $table->string('name')->unique();
-            $table->string('value'); // % giảm giá
-            $table->dateTime('start_date')->nullable(); // Ngày bắt đầu
-            $table->dateTime('end_date')->nullable(); // Ngày kết thúc
+            $table->string('value');
+            $table->dateTime('start_date')->nullable();
+            $table->dateTime('end_date')->nullable();
             $table->enum('status', ['active', 'inactive'])->default('active'); // Trạng thái
             $table->enum('type', ['fixed', 'percentage'])->default('percentage'); // Loại giảm giá
             $table->tinyInteger("deleted")->default(0);

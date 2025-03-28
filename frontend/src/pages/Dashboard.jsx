@@ -3,6 +3,7 @@ import Sidebar from '../components/Sidebar';
 import '../styles/Dashboard.css';
 import { useState, useEffect } from "react";
 import axios from "axios";
+import api from '../api';
 import { Chart as ChartJS, CategoryScale, LinearScale, BarElement, Title, Tooltip, Legend, ArcElement, PointElement, LineElement } from "chart.js";
 import { Bar, Pie, Line } from "react-chartjs-2";
 
@@ -12,7 +13,7 @@ const Dashboard = () => {
     const [data, setData] = useState(null);
 
     useEffect(() => {
-        axios.get("http://127.0.0.1:8000/api/dashboard")
+        api.get("http://127.0.0.1:8000/api/dashboard")
             .then(response => setData(response.data))
             .catch(error => console.error("Lỗi lấy dữ liệu:", error));
     }, []);

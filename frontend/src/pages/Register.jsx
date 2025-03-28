@@ -1,7 +1,7 @@
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import api from "../api";
-import "../styles/Login.css?v=1.1"; // Sử dụng cùng tệp CSS với trang đăng nhập
+import "../styles/Login.css?v=1.1";
 
 const Register = () => {
     const navigate = useNavigate();

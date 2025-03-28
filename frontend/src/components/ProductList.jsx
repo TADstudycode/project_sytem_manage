@@ -1,5 +1,5 @@
 import { useState, useEffect } from "react";
-import axios from "axios";
+import api from "../api";
 import '../styles/ProductList.css';
 import '../styles/Overlay.css';
 const ProductList = () => {
@@ -25,7 +25,7 @@ const ProductList = () => {
   }, []);
 
   const fetchProducts = (url) => {
-    axios.post(url, { action: "get" }).then((response) => {
+    api.post(url, { action: "get" }).then((response) => {
       setProducts(response.data.data.data);
       setPagination({
         prev_page: response.data.data.prev_page_url,
@@ -52,7 +52,7 @@ const ProductList = () => {
     setFormData({ ...formData, [e.target.name]: e.target.value });
   };
   const handleSaveEdit = () => {
-    axios
+    api
       .post("http://127.0.0.1:8000/api/product/edit", { id: editProduct.id, ...formData, action:"edit" })
       .then((response) => {
         alert("Cập nhật thành công!");
@@ -63,7 +63,7 @@ const ProductList = () => {
   };
   const handleDelete = (id) => {
     if (window.confirm("Bạn có chắc chắn muốn xóa sản phẩm này?")) {
-      axios
+      api
         .post("http://127.0.0.1:8000/api/product/delete", { id , action:"delete"})
         .then((response) => {
           alert("Xóa thành công!");
@@ -87,7 +87,7 @@ const ProductList = () => {
   };
 
   const handleSaveCreate = () =>{
-    axios
+    api
         .post("http://127.0.0.1:8000/api/product/add", {...formData, action:"add"})
         .then((response)=>{
           alert("Thêm sản phẩm thành công!");

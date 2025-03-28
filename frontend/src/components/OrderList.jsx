@@ -1,31 +1,27 @@
 import React, { useState, useEffect } from "react";
-import axios from "axios";
-
+import api from "../api";
 const OrderList = () => {
-    const [orders, setOrders] = useState([]); // Danh sách đơn hàng
-    const [selectedOrder, setSelectedOrder] = useState(null); // Đơn hàng được chọn để cập nhật
-    const [search, setSearch] = useState(""); // Tìm kiếm theo order_number
-    const [filterStatus, setFilterStatus] = useState(""); // Lọc theo trạng thái đơn hàng
-    const [showConfirmModal, setShowConfirmModal] = useState(false); // Hiển thị modal xác nhận
-    const [showAlertModal, setShowAlertModal] = useState(false); // Hiển thị modal thông báo
-    const [alertMessage, setAlertMessage] = useState(""); // Nội dung thông báo
-    const [productToUpdate, setProductToUpdate] = useState(null); // Sản phẩm cần cập nhật
+    const [orders, setOrders] = useState([]);
+    const [selectedOrder, setSelectedOrder] = useState(null);
+    const [search, setSearch] = useState("");
+    const [filterStatus, setFilterStatus] = useState("");
+    const [showConfirmModal, setShowConfirmModal] = useState(false);
+    const [showAlertModal, setShowAlertModal] = useState(false);
+    const [alertMessage, setAlertMessage] = useState("");
+    const [productToUpdate, setProductToUpdate] = useState(null);
 
     const handleShowConfirmModal = (product) => {
         setProductToUpdate(product);
         setShowConfirmModal(true);
     };
-
-    // Lấy danh sách đơn hàng từ API
     useEffect(() => {
         fetchOrders();
     }, []);
 
     const fetchOrders = async () => {
         try {
-            const response = await axios.post("http://127.0.0.1:8000/api/order/get");
+            const response = await api.post("http://127.0.0.1:8000/api/order/get");
             if (response.data && response.data.data) {
-                // Nhóm các sản phẩm theo order_number
                 const groupedOrders = response.data.data.reduce((acc, order) => {
                     if (!acc[order.order_number]) {
                         acc[order.order_number] = {
@@ -43,13 +39,13 @@ const OrderList = () => {
                     acc[order.order_number].total_price += parseFloat(order.total_price);
                     return acc;
                 }, {});
-                setOrders(Object.values(groupedOrders)); // Chuyển từ object sang array
+                setOrders(Object.values(groupedOrders));
             } else {
-                setOrders([]); // Nếu không có dữ liệu, gán mảng rỗng
+                setOrders([]);
             }
         } catch (error) {
             console.error("Lỗi khi lấy danh sách đơn hàng:", error);
-            setOrders([]); // Gán mảng rỗng nếu có lỗi
+            setOrders([]);
         }
     };
 
@@ -59,24 +55,22 @@ const OrderList = () => {
                 ...productToUpdate,
                 quantity: parseInt(productToUpdate.quantity),
             };
-            const response = await axios.post("http://127.0.0.1:8000/api/order/update", {
+            const response = await api.post("http://127.0.0.1:8000/api/order/update", {
                 order_number: selectedOrder.order_number,
                 product_id: updatedProduct.product_id,
                 quantity: updatedProduct.quantity,
             });
-            setAlertMessage(response.data.message); // Lưu thông báo thành công
-            setShowAlertModal(true); // Hiển thị modal thông báo
-            fetchOrders(); // Cập nhật lại danh sách đơn hàng
-            setSelectedOrder(null); // Đóng modal chi tiết đơn hàng
+            setAlertMessage(response.data.message);
+            setShowAlertModal(true);
+            fetchOrders();
+            setSelectedOrder(null);
         } catch (error) {
-            setAlertMessage(error.response?.data?.message || "Đã xảy ra lỗi!"); // Lưu thông báo lỗi
-            setShowAlertModal(true); // Hiển thị modal thông báo
+            setAlertMessage(error.response?.data?.message || "Đã xảy ra lỗi!");
+            setShowAlertModal(true);
         } finally {
-            setShowConfirmModal(false); // Đóng modal xác nhận
+            setShowConfirmModal(false);
         }
     };
-
-    // Xử lý cập nhật đơn hàng
     const handleUpdateProduct = (product) => {
         const newQuantity = prompt("Nhập số lượng mới:", product.quantity);
         if (newQuantity) {
@@ -86,7 +80,7 @@ const OrderList = () => {
 
     const handleUpdateOrderStatus = async () => {
         try {
-            const response = await axios.post("http://127.0.0.1:8000/api/order/update", {
+            const response = await api.post("http://127.0.0.1:8000/api/order/update", {
                 order_number: selectedOrder.order_number,
                 order_status: selectedOrder.order_status,
                 customer_name: selectedOrder.customer_name,
@@ -95,17 +89,16 @@ const OrderList = () => {
                 customer_address: selectedOrder.customer_address,
 
             });
-            setAlertMessage(response.data.message); // Lưu thông báo thành công
-            setShowAlertModal(true); // Hiển thị modal thông báo
-            fetchOrders(); // Cập nhật lại danh sách đơn hàng
-            setSelectedOrder(null); // Đóng modal
+            setAlertMessage(response.data.message);
+            setShowAlertModal(true);
+            fetchOrders();
+            setSelectedOrder(null);
         } catch (error) {
-            setAlertMessage(error.response?.data?.message || "Đã xảy ra lỗi!"); // Lưu thông báo lỗi
-            setShowAlertModal(true); // Hiển thị modal thông báo
+            setAlertMessage(error.response?.data?.message || "Đã xảy ra lỗi!");
+            setShowAlertModal(true);
         }
     };
 
-    // Lọc và tìm kiếm đơn hàng
     const filteredOrders = orders.filter((order) => {
         return (
             order.order_number.includes(search) &&
@@ -116,15 +109,15 @@ const OrderList = () => {
     const deleteOrder = async (orderNumber) => {
         if (window.confirm(`Bạn có chắc chắn muốn xóa đơn hàng ${orderNumber}?`)) {
             try {
-                const response = await axios.post("http://127.0.0.1:8000/api/order/delete", {
+                const response = await api.post("http://127.0.0.1:8000/api/order/delete", {
                     order_number: orderNumber
                 });
-                setAlertMessage(response.data.message); // Hiển thị thông báo thành công
-                setShowAlertModal(true); // Hiển thị modal thông báo
-                fetchOrders(); // Cập nhật lại danh sách đơn hàng
+                setAlertMessage(response.data.message);
+                setShowAlertModal(true);
+                fetchOrders();
             } catch (error) {
-                setAlertMessage(error.response?.data?.message || "Đã xảy ra lỗi khi xóa đơn hàng!"); // Hiển thị thông báo lỗi
-                setShowAlertModal(true); // Hiển thị modal thông báo
+                setAlertMessage(error.response?.data?.message || "Đã xảy ra lỗi khi xóa đơn hàng!");
+                setShowAlertModal(true);
             }
         }
     };

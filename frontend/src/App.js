@@ -1,52 +1,24 @@
-// import logo from './logo.svg';
-// import './App.css';
-
-// function App() {
-//   return (
-//     <div className="App">
-//       <header className="App-header">
-//         <img src={logo} className="App-logo" alt="logo" />
-//         <p>
-//           Edit <code>src/App.js</code> and save to reload.
-//         </p>
-//         <a
-//           className="App-link"
-//           href="https://reactjs.org"
-//           target="_blank"
-//           rel="noopener noreferrer"
-//         >
-//           Learn React
-//         </a>
-//       </header>
-//     </div>
-//   );
-// }
-
-// export default App;
-// import {useEffect, useState} from "react";
-// import axios from "axios";
-
-// function App(){
-//   const [data, setData] = useState(null);
-
-//   useEffect(() =>{
-//     axios.get("http://127.0.0.1:8000/index.php")
-//     .then(response => setData(response.data))
-//     .catch(error => console.error("lỗi khi gọi API", error));
-//   }, []);
-
-//   return (
-//     <div>
-//       <h1>Quản lí thiết bị và linh kiện máy tính</h1>
-//       <p>{data ? data.message: "đang tải dữ liệu..."}</p>
-//     </div>
-//   );
-// }
-
-// export default App;
+import { useEffect } from "react";
+import { useNavigate, useLocation } from "react-router-dom";
 import AppRoutes from "./routes";
-
 function App() {
+  const navigate = useNavigate();
+  const location = useLocation();
+  useEffect(() => {
+    const token = localStorage.getItem("token");
+    const publicPaths = ["/register", "/login"];
+    if (!token && !publicPaths.includes(location.pathname)) {
+      navigate("/login", { state: { from: location.pathname } });
+    } else if (token && publicPaths.includes(location.pathname)) {
+      const redirectPath = location.state?.from || "/";
+      if (redirectPath === "/login" || redirectPath === "/register") {
+        navigate("/dashboard");
+      } else {
+        navigate(redirectPath);
+      }
+    }
+  }, [navigate, location.pathname, location.state]);
+
   return <AppRoutes />;
 }
 

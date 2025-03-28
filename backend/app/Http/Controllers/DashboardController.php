@@ -45,13 +45,8 @@ class DashboardController extends Controller
     // }
     public function index()
 {
-    // Tổng số đơn hàng
     $totalOrders = DB::table('orders')->where('order_status', 'Completed')->count();
-
-    // Tổng doanh thu
     $totalRevenue = DB::table('orders')->where('order_status', 'Completed')->sum('total_price');
-
-    // Doanh thu theo từng tháng
     $monthlySales = DB::table('orders')
         ->select(
             DB::raw('MONTH(created_at) as month'),
@@ -59,8 +54,6 @@ class DashboardController extends Controller
         )
         ->groupBy('month')
         ->get();
-
-    // Số lượng sản phẩm bán ra theo loại sản phẩm
     $productSales = DB::table('products')
         ->join('orders', 'products.id', '=', 'orders.product_id')
         ->select(
@@ -69,8 +62,6 @@ class DashboardController extends Controller
         )
         ->groupBy('products.category')
         ->get();
-
-    // Số lượng đơn hàng theo trạng thái
     $orderStatus = DB::table('orders')
         ->select(
             'order_status',
@@ -78,8 +69,6 @@ class DashboardController extends Controller
         )
         ->groupBy('order_status')
         ->get();
-
-    // Doanh thu theo từng ngày trong 7 ngày gần nhất
     $dailyRevenue = DB::table('orders')
         ->select(
             DB::raw('DATE(created_at) as date'),
@@ -89,11 +78,7 @@ class DashboardController extends Controller
         ->groupBy('date')
         ->orderBy('date', 'ASC')
         ->get();
-
-    // Tổng số khách hàng duy nhất
     $totalCustomers = DB::table('orders')->distinct('customer_email')->count('customer_email');
-
-    // Trả về dữ liệu dưới dạng JSON
     return response()->json([
         'total_orders' => $totalOrders,
         'total_revenue' => $totalRevenue,
