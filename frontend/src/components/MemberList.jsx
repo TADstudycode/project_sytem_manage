@@ -55,16 +55,16 @@ const MemberList = () => {
     }
   };
 
-  const handleSaveEdit = () => {
-    api
-      .post("http://127.0.0.1:8000/api/member/edit", { id: editMember.id, ...formData, action: "edit" })
-      .then((response) => {
-        alert("Cập nhật thành công!");
-        setShowEditModal(false);
-        fetchMembers("http://127.0.0.1:8000/api/member/get?page=1");
-      })
-      .catch((error) => alert("Lỗi khi cập nhật!"));
-  };
+  // const handleSaveEdit = () => {
+  //   api
+  //     .post("http://127.0.0.1:8000/api/member/edit", { id: editMember.id, ...formData, action: "edit" })
+  //     .then((response) => {
+  //       alert("Cập nhật thành công!");
+  //       setShowEditModal(false);
+  //       fetchMembers("http://127.0.0.1:8000/api/member/get?page=1");
+  //     })
+  //     .catch((error) => alert("Lỗi khi cập nhật!"));
+  // };
 
   const handleDelete = (id) => {
     if (window.confirm("Bạn có chắc chắn muốn xóa thành viên này?")) {
@@ -90,9 +90,29 @@ const MemberList = () => {
     setShowCreateModal(true);
   };
 
+  // const handleSaveCreate = () => {
+  //   api
+  //     .post("http://127.0.0.1:8000/api/member/add", { ...formData, action: "add" })
+  //     .then((response) => {
+  //       alert("Thêm thành viên thành công!");
+  //       setShowCreateModal(false);
+  //       fetchMembers("http://127.0.0.1:8000/api/member/get?page=1");
+  //     })
+  //     .catch((error) => alert("Lỗi khi thêm thành viên!"));
+  // };
   const handleSaveCreate = () => {
+    const formDataToSend = new FormData();
+    Object.keys(formData).forEach((key) => {
+      formDataToSend.append(key, formData[key]);
+    });
+    formDataToSend.append("action", "add");
+  
     api
-      .post("http://127.0.0.1:8000/api/member/add", { ...formData, action: "add" })
+      .post("http://127.0.0.1:8000/api/member/add", formDataToSend, {
+        headers: {
+          "Content-Type": "multipart/form-data",
+        },
+      })
       .then((response) => {
         alert("Thêm thành viên thành công!");
         setShowCreateModal(false);
@@ -100,7 +120,28 @@ const MemberList = () => {
       })
       .catch((error) => alert("Lỗi khi thêm thành viên!"));
   };
-
+  
+  const handleSaveEdit = () => {
+    const formDataToSend = new FormData();
+    Object.keys(formData).forEach((key) => {
+      formDataToSend.append(key, formData[key]);
+    });
+    formDataToSend.append("action", "edit");
+    formDataToSend.append("id", editMember.id);
+  
+    api
+      .post("http://127.0.0.1:8000/api/member/edit", formDataToSend, {
+        headers: {
+          "Content-Type": "multipart/form-data",
+        },
+      })
+      .then((response) => {
+        alert("Cập nhật thành công!");
+        setShowEditModal(false);
+        fetchMembers("http://127.0.0.1:8000/api/member/get?page=1");
+      })
+      .catch((error) => alert("Lỗi khi cập nhật!"));
+  };
   return (
     <div className="container">
         <div className="add_button_wrap row p-3">
@@ -193,11 +234,12 @@ const MemberList = () => {
                 <div className="mb-3">
                   <label className="form-label">Hình ảnh</label>
                   <input
-                    type="text"
+                    type="file"
                     className="form-control"
                     name="image"
-                    value={formData.image}
-                    onChange={handleChange}
+                    // value={formData.image}
+                    // onChange={handleChange}
+                    onChange={(e) => setFormData({ ...formData, image: e.target.files[0] })}
                   />
                 </div>
                 <div className="mb-3">
@@ -285,11 +327,12 @@ const MemberList = () => {
                 <div className="mb-3">
                   <label className="form-label">Hình ảnh</label>
                   <input
-                    type="text"
+                    type="file"
                     className="form-control"
                     name="image"
-                    value={formData.image}
-                    onChange={handleChange}
+                    // value={formData.image}
+                    // onChange={handleChange}
+                    onChange={(e) => setFormData({ ...formData, image: e.target.files[0] })}
                   />
                 </div>
                 <div className="mb-3">

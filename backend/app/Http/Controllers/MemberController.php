@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 use App\Models\Member;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Validator;
+use Illuminate\Support\Facades\Storage;
 class MemberController extends Controller
 {
     /**
@@ -106,7 +107,7 @@ class MemberController extends Controller
             'name' => 'required|string|max:255',
             'email' => 'required|email|max:255',
             'phone' => 'required|string|max:15',
-            'image' => 'nullable|string',
+            'image' => 'nullable|file|mimes:jpeg,png,jpg,gif|max:2048',
             'address' => 'required|string|max:255',
             'role' => 'required|string|max:50',
             'description' => 'nullable|string',
@@ -120,6 +121,10 @@ class MemberController extends Controller
         }
 
         $data = $validator->validated();
+        if ($request->hasFile('image')) {
+            $imagePath = $request->file('image')->store('images/members', 'public');
+            $data['image'] = '/storage/'.$imagePath;
+        }
         Member::create($data);
         return response()->json([
             'status' => 0,
@@ -175,7 +180,8 @@ class MemberController extends Controller
             'id' => 'required|exists:members,id',
             'name' => 'string|max:255',
             'email' => 'email|max:255',
-            'image' => 'nullable|string',
+            // 'image' => 'nullable|string',
+            'image' => 'nullable|file|mimes:jpeg,png,jpg,gif|max:2048',
             'phone' => 'string|max:15',
             'address' => 'string|max:255',
             'role' => 'string|max:50',
@@ -191,6 +197,14 @@ class MemberController extends Controller
 
         $data = $validator->validated();
         $member = Member::findOrFail($data['id']);
+        if ($request->hasFile('image')) {
+            // Xóa ảnh cũ nếu có
+            if ($member->image) {
+                Storage::disk('public')->delete($member->image);
+            }
+            $imagePath = $request->file('image')->store('images/members', 'public');
+            $data['image'] = '/storage/'.$imagePath;
+        }
         $member->update($data);
 
         return response()->json([

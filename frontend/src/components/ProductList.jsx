@@ -51,16 +51,16 @@ const ProductList = () => {
   const handleChange = (e) => {
     setFormData({ ...formData, [e.target.name]: e.target.value });
   };
-  const handleSaveEdit = () => {
-    api
-      .post("http://127.0.0.1:8000/api/product/edit", { id: editProduct.id, ...formData, action:"edit" })
-      .then((response) => {
-        alert("Cập nhật thành công!");
-        setShowEditModal(false);
-        fetchProducts("http://127.0.0.1:8000/api/product/get?page=1");
-      })
-      .catch((error) => alert("Lỗi khi cập nhật!"));
-  };
+  // const handleSaveEdit = () => {
+  //   api
+  //     .post("http://127.0.0.1:8000/api/product/edit", { id: editProduct.id, ...formData, action:"edit" })
+  //     .then((response) => {
+  //       alert("Cập nhật thành công!");
+  //       setShowEditModal(false);
+  //       fetchProducts("http://127.0.0.1:8000/api/product/get?page=1");
+  //     })
+  //     .catch((error) => alert("Lỗi khi cập nhật!"));
+  // };
   const handleDelete = (id) => {
     if (window.confirm("Bạn có chắc chắn muốn xóa sản phẩm này?")) {
       api
@@ -86,17 +86,58 @@ const ProductList = () => {
     setShowCreateModal(true);
   };
 
-  const handleSaveCreate = () =>{
+  // const handleSaveCreate = () =>{
+  //   api
+  //       .post("http://127.0.0.1:8000/api/product/add", {...formData, action:"add"})
+  //       .then((response)=>{
+  //         alert("Thêm sản phẩm thành công!");
+  //         setShowEditModal(false);
+  //         fetchProducts("http://127.0.0.1:8000/api/product/get?page=1");
+  //       })
+  //       .catch((error)=>alert("Lỗi khi thêm sản phẩm!"));
+  // };
+  const handleSaveCreate = () => {
+    const formDataToSend = new FormData();
+    Object.keys(formData).forEach((key) => {
+      formDataToSend.append(key, formData[key]);
+    });
+    formDataToSend.append("action", "add");
+  
     api
-        .post("http://127.0.0.1:8000/api/product/add", {...formData, action:"add"})
-        .then((response)=>{
-          alert("Thêm sản phẩm thành công!");
-          setShowEditModal(false);
-          fetchProducts("http://127.0.0.1:8000/api/product/get?page=1");
-        })
-        .catch((error)=>alert("Lỗi khi thêm sản phẩm!"));
+      .post("http://127.0.0.1:8000/api/product/add", formDataToSend, {
+        headers: {
+          "Content-Type": "multipart/form-data",
+        },
+      })
+      .then((response) => {
+        alert("Thêm sản phẩm thành công!");
+        setShowCreateModal(false);
+        fetchProducts("http://127.0.0.1:8000/api/product/get?page=1");
+      })
+      .catch((error) => alert("Lỗi khi thêm sản phẩm!"));
   };
-
+  
+  const handleSaveEdit = () => {
+    const formDataToSend = new FormData();
+    Object.keys(formData).forEach((key) => {
+      formDataToSend.append(key, formData[key]);
+    });
+    formDataToSend.append("action", "edit");
+    formDataToSend.append("id", editProduct.id);
+  
+    api
+      .post("http://127.0.0.1:8000/api/product/edit", formDataToSend, {
+        headers: {
+          "Content-Type": "multipart/form-data",
+        },
+      })
+      .then((response) => {
+        alert("Cập nhật thành công!");
+        setShowEditModal(false);
+        fetchProducts("http://127.0.0.1:8000/api/product/get?page=1");
+      })
+      .catch((error) => alert("Lỗi khi cập nhật!"));
+  };
   return (
     <div className="container">
       <div className="add_button_wrap row p-3">
@@ -189,11 +230,12 @@ const ProductList = () => {
                 <div className="mb-3">
                   <label className="form-label">Hình ảnh</label>
                   <input
-                    type="text"
+                    type="file"
                     className="form-control"
                     name="image"
-                    value={formData.image}
-                    onChange={handleChange}
+                    // value={formData.image}
+                    // onChange={handleChange}
+                    onChange={(e) => setFormData({ ...formData, image: e.target.files[0] })}
                   />
                 </div>
                 <div className="mb-3">
@@ -301,11 +343,12 @@ const ProductList = () => {
                 <div className="mb-3">
                   <label className="form-label">Hình ảnh</label>
                   <input
-                    type="text"
+                    type="file"
                     className="form-control"
                     name="image"
-                    value={formData.image}
-                    onChange={handleChange}
+                    // value={formData.image}
+                    // onChange={handleChange}
+                    onChange={(e) => setFormData({ ...formData, image: e.target.files[0] })}
                   />
                 </div>
                 <div className="mb-3">

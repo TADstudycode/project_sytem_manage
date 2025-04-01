@@ -62,7 +62,8 @@ class ProductController extends Controller
             'status' => 'string|max:255',
             'import_price' => 'required|string|max:50',
             'sale_price' => 'nullable|string',
-            'image' => 'nullable',
+            // 'image' => 'nullable',
+            'image' => 'nullable|file|mimes:jpeg,png,jpg,gif|max:2048',
             'description' => 'nullable|string',
             'brand' => 'nullable|string',
             'quantity' => 'nullable|string'
@@ -78,7 +79,7 @@ class ProductController extends Controller
         $data = $validator->validated();
         if ($request->hasFile('image')) {
             $imagePath = $request->file('image')->store('images/products', 'public');
-            $data['image'] = $imagePath;
+            $data['image'] = '/storage/'.$imagePath;
         }
         Product::create($data);
         return response()->json([
@@ -109,7 +110,8 @@ class ProductController extends Controller
             'status' => 'string|max:255',
             'import_price' => 'string|max:50',
             'sale_price' => 'nullable|string',
-            'image' => 'nullable',
+            // 'image' => 'nullable',
+            'image' => 'nullable|file|mimes:jpeg,png,jpg,gif|max:2048',
             'description' => 'nullable|string',
             'brand' => 'nullable|string',
             'quantity' => 'nullable|integer'
@@ -129,7 +131,7 @@ class ProductController extends Controller
                 Storage::disk('public')->delete($product->image);
             }
             $imagePath = $request->file('image')->store('images/products', 'public');
-            $data['image'] = $imagePath;
+            $data['image'] = '/storage/'.$imagePath;
         }
         $product->update($data);
         return response()->json([
